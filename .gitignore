@@ -1,0 +1,38 @@
+# Qt generated files
+Makefile
+.qmake.stash
+moc_*.cpp
+moc_predefs.h
+ui_*.h
+qrc_*.cpp
+
+# Compiled object files
+*.o
+*.obj
+
+# Qt build artifacts
+*.app
+*.exe
+
+# Build directories
+build/
+debug/
+release/
+
+# macOS specific
+.DS_Store
+*.dSYM
+
+# IDE files
+.vscode/
+.idea/
+*.user
+*.pro.user
+*.autosave
+
+# Temporary files
+*~
+*.swp
+*.swo
+core
+*.core
