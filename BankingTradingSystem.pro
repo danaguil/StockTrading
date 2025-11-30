@@ -14,7 +14,9 @@ SOURCES += \
 
 HEADERS += \
     BankingSystem.h \
-    MainWindow.h
+    MainWindow.h \
+    StockAbstractFactory.h \
+    TradingBot.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
