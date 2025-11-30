@@ -1,5 +1,5 @@
 // MainWindow.cpp
-#include "MainWindow.h"
+#include "UI/MainWindow.h"
 #include "TradingBot.h"
 #include <QGridLayout>
 #include <QHeaderView>

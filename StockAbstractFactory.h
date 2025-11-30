@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-// Abstract Factory
+// Abstract AbstractFactory
 class StockAbstractFactory {
 public:
     virtual ~StockAbstractFactory() {}
