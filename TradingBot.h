@@ -97,9 +97,12 @@ public:
     virtual vector<StockRanks> rankStocks(const vector<StockFields>& stocks, double balance) = 0;
 
     virtual double getTakeProfit() const = 0;  // When to sell for profit
+
     virtual double getStopLoss() const = 0;    // When to sell to prevent loss
-    virtual int getMaxHoldings() const = 0;
-    virtual string getStrategyName() const = 0;
+
+    virtual int getMaxHoldings() const = 0; //the maximum amount of holdings you can buy
+    
+    virtual string getStrategyName() const = 0; //getter for the current strategy being used
 
 };
 
@@ -576,6 +579,7 @@ public:
     }
 
     // Sell everything if desperate
+    //not sure if this is need  in current interation..
     void liquidateAll() {
         vector<pair<string, int>> toSell;
 
@@ -638,11 +642,25 @@ public:
         return total;
     }
 
-    int getCurrentDay() { return currentDay; }
-    string getMarketCondition() { return marketCondition; }
-    vector<StockFields> getAllStocks() { return stocks; }
-    vector<TradeRecords> getHistory() { return history; }
-    vector<StockRanks> getRankings() { return rankings; }
+    int getCurrentDay() { 
+        return currentDay; 
+    }
+
+    string getMarketCondition() { 
+        return marketCondition; 
+    }
+
+    vector<StockFields> getAllStocks() { 
+        return stocks; 
+    }
+
+    vector<TradeRecords> getHistory() { 
+        return history; 
+    }
+
+    vector<StockRanks> getRankings() { 
+        return rankings; 
+    }
 
     vector<Portfolio> getPortfolio() {
 
@@ -662,7 +680,7 @@ public:
 
     }
 
-    // Reset for new simulation
+    // Reset for new simulation, go back to default Strategy.
     void reset() {
         running = false;
         currentDay = 1;
