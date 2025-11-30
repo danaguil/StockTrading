@@ -17,6 +17,7 @@
 #include <QDoubleSpinBox>
 #include <QMessageBox>
 #include "BankingSystem.h"
+#include "TradingBot.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -39,6 +40,13 @@ private slots:
     void onScheduleDepositClicked();
     void onViewScheduledDepositsClicked();
     void onAdvanceDayClicked();
+    
+    // Trading slots
+    void onStartBotClicked();
+    void onStopBotClicked();
+    void onRefreshMarketClicked();
+    void onEndSimulationClicked();
+    void onResetSimulationClicked();
 
 private:
     // Setup methods
@@ -51,6 +59,10 @@ private:
     void updateUIState();
     void refreshBalance();
     void refreshTransactionHistory();
+    void refreshMarketData();
+    void refreshPortfolio();
+    void refreshTradingStats();
+    void refreshTradeHistory();
     
     // Main layout components
     QWidget *centralWidget;
@@ -105,10 +117,15 @@ private:
     QPushButton *startBotButton;
     QPushButton *stopBotButton;
     QPushButton *refreshMarketButton;
+    QPushButton *endSimulationButton;
+    QPushButton *resetSimulationButton;
     QLabel *botStatusLabel;
+    QLabel *strategyLabel;
+    QLabel *marketConditionLabel;
     QLabel *totalProfitLabel;
     QLabel *totalSharesLabel;
     QLabel *daysElapsedLabel;
+    QTextEdit *tradeHistoryDisplay;
     
     // Current day tracker
     int currentDay;

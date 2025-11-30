@@ -1,5 +1,5 @@
 // MainWindow.cpp
-#include "UI/MainWindow.h"
+#include "MainWindow.h"
 #include "TradingBot.h"
 #include <QGridLayout>
 #include <QHeaderView>
@@ -460,7 +460,7 @@ void MainWindow::onScheduleDepositClicked() {
 
 void MainWindow::onViewScheduledDepositsClicked() {
     BankingSystem& bank = BankingSystem::getInstance();
-    vector<ScheduledDeposit> scheduled = bank.getScheduledDeposits();
+    std::vector<ScheduledDeposit> scheduled = bank.getScheduledDeposits();
 
     QString message;
     if (scheduled.empty()) {
