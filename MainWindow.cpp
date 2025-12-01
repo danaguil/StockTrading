@@ -730,9 +730,8 @@ void MainWindow::setupTradingPage() {
     tradingPage = scrollArea;
 }
 
-// ============================================================================
-// AUTHENTICATION SLOTS
-// ============================================================================
+// --- User Authentication ---
+// Handle login, registration, and logout
 
 void MainWindow::onLoginClicked() {
     QString username = usernameInput->text();
@@ -744,9 +743,9 @@ void MainWindow::onLoginClicked() {
         return;
     }
 
-    BankingSystem& bank = BankingSystem::getInstance();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
 
-    if (bank.login(username.toStdString(), password.toStdString())) {
+    if (facade.login(username.toStdString(), password.toStdString())) {
         statusLabel->setText("Login successful!");
         statusLabel->setStyleSheet("color: green;");
         updateUIState();
@@ -768,9 +767,9 @@ void MainWindow::onRegisterClicked() {
         return;
     }
 
-    BankingSystem& bank = BankingSystem::getInstance();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
 
-    if (bank.registerUser(username.toStdString(), password.toStdString(), 10000.0)) {
+    if (facade.registerUser(username.toStdString(), password.toStdString(), 10000.0)) {
         statusLabel->setText("Registration successful! Please login.");
         statusLabel->setStyleSheet("color: green;");
         passwordInput->clear();
@@ -781,8 +780,7 @@ void MainWindow::onRegisterClicked() {
 }
 
 void MainWindow::onLogoutClicked() {
-    TradingBot::getInstance().stopBot();
-    BankingSystem::getInstance().logout();
+    BankingTradingFacade::getInstance().logout();
 
     usernameInput->clear();
     passwordInput->clear();
@@ -792,17 +790,16 @@ void MainWindow::onLogoutClicked() {
     updateUIState();
 }
 
-// ============================================================================
-// BANKING SLOTS
-// ============================================================================
+// --- Banking Operations ---
+// Deposits, withdrawals, and scheduled transactions
 
 void MainWindow::onDepositClicked() {
-    BankingSystem& bank = BankingSystem::getInstance();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
 
     double amount = depositAmount->value();
     QString description = depositDescription->text();
 
-    if (bank.deposit(amount, description.toStdString(), currentDay)) {
+    if (facade.deposit(amount, description.toStdString(), currentDay)) {
         QMessageBox::information(this, "Success",
                                  QString("Deposited $%1 on day %2!").arg(amount, 0, 'f', 2).arg(currentDay));
         refreshBalance();
@@ -813,12 +810,12 @@ void MainWindow::onDepositClicked() {
 }
 
 void MainWindow::onWithdrawClicked() {
-    BankingSystem& bank = BankingSystem::getInstance();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
 
     double amount = withdrawAmount->value();
     QString description = withdrawDescription->text();
 
-    if (bank.withdraw(amount, description.toStdString(), currentDay)) {
+    if (facade.withdraw(amount, description.toStdString(), currentDay)) {
         QMessageBox::information(this, "Success",
                                  QString("Withdrew $%1 on day %2!").arg(amount, 0, 'f', 2).arg(currentDay));
         refreshBalance();
@@ -833,7 +830,7 @@ void MainWindow::onViewTransactionsClicked() {
 }
 
 void MainWindow::onScheduleDepositClicked() {
-    BankingSystem& bank = BankingSystem::getInstance();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
 
     double amount = scheduledDepositAmount->value();
     QString description = scheduledDepositDescription->text();
@@ -845,7 +842,7 @@ void MainWindow::onScheduleDepositClicked() {
         return;
     }
 
-    if (bank.scheduleDeposit(day, amount, description.toStdString())) {
+    if (facade.scheduleDeposit(day, amount, description.toStdString())) {
         QMessageBox::information(this, "Success",
                                  QString("Scheduled $%1 deposit for day %2").arg(amount, 0, 'f', 2).arg(day));
     } else {
@@ -854,8 +851,8 @@ void MainWindow::onScheduleDepositClicked() {
 }
 
 void MainWindow::onViewScheduledDepositsClicked() {
-    BankingSystem& bank = BankingSystem::getInstance();
-    std::vector<ScheduledDeposit> scheduled = bank.getScheduledDeposits();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
+    std::vector<BankingTradingFacade::SimpleScheduledDeposit> scheduled = facade.getScheduledDeposits();
 
     QString message;
     if (scheduled.empty()) {
@@ -863,11 +860,11 @@ void MainWindow::onViewScheduledDepositsClicked() {
     } else {
         message = QString("Scheduled Deposits (Current Day: %1):\n\n").arg(currentDay);
         for (const auto& dep : scheduled) {
-            QString status = dep.isExecuted() ? "EXECUTED" : "PENDING";
+            QString status = dep.executed ? "EXECUTED" : "PENDING";
             message += QString("Day %1: $%2 - %3 [%4]\n")
-                           .arg(dep.getScheduledDay())
-                           .arg(dep.getAmount(), 0, 'f', 2)
-                           .arg(QString::fromStdString(dep.getDescription()))
+                           .arg(dep.scheduledDay)
+                           .arg(dep.amount, 0, 'f', 2)
+                           .arg(QString::fromStdString(dep.description))
                            .arg(status);
         }
     }
@@ -876,14 +873,14 @@ void MainWindow::onViewScheduledDepositsClicked() {
 }
 
 void MainWindow::onAdvanceDayClicked() {
-    BankingSystem& bank = BankingSystem::getInstance();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
     TradingBot& bot = TradingBot::getInstance();
 
     currentDay++;
     currentDayLabel->setText(QString("Current Day: %1").arg(currentDay));
 
     // Execute scheduled deposits
-    int executed = bank.executeScheduledDeposits(currentDay);
+    int executed = facade.executeScheduledDeposits(currentDay);
     if (executed > 0) {
         QMessageBox::information(this, "Deposits Executed",
                                  QString("Executed %1 scheduled deposit(s) on day %2!").arg(executed).arg(currentDay));
@@ -903,13 +900,12 @@ void MainWindow::onAdvanceDayClicked() {
     refreshTradingStats();
 }
 
-// ============================================================================
-// TRADING SLOTS
-// ============================================================================
+// --- Trading Bot Controls ---
+// Start, stop, and manage the automated trading bot
 
 void MainWindow::onStartBotClicked() {
-    TradingBot& bot = TradingBot::getInstance();
-    bot.startBot();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
+    facade.startBot();
 
     botStatusLabel->setText("Bot Status: ACTIVE");
     botStatusLabel->setStyleSheet(
@@ -925,8 +921,8 @@ void MainWindow::onStartBotClicked() {
 }
 
 void MainWindow::onStopBotClicked() {
-    TradingBot& bot = TradingBot::getInstance();
-    bot.stopBot();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
+    facade.stopBot();
 
     botStatusLabel->setText("Bot Status: INACTIVE");
     botStatusLabel->setStyleSheet(
@@ -990,10 +986,9 @@ void MainWindow::onEndSimulationClicked() {
 }
 
 void MainWindow::onResetSimulationClicked() {
-    TradingBot& bot = TradingBot::getInstance();
-    BankingSystem& bank = BankingSystem::getInstance();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
 
-    // added a way to reset the simulation
+    // Confirm before resetting everything
     QMessageBox::StandardButton reply = QMessageBox::question(this, "START OVER",
                                                               "Are you sure you want to reset the simulation?\n\n"
                                                               "Wiping trading bot history ok?",
@@ -1002,10 +997,9 @@ void MainWindow::onResetSimulationClicked() {
 
     if (reply != QMessageBox::Yes) return;
 
-    // Reset everything
+    // Reset everything using Facade
     currentDay = 1;
-    bot.reset();
-    bank.resetCurrentAccount(10000.0);
+    facade.resetSimulation();
 
     // Update UI
     currentDayLabel->setText(QString("Current Day: %1").arg(currentDay));
@@ -1026,33 +1020,32 @@ void MainWindow::onResetSimulationClicked() {
                              "Stock prices reset to opening values.");
 }
 
-// ============================================================================
-// HELPER METHODS
-// ============================================================================
+// --- UI Helper Functions ---
+// Update displays and refresh data across the interface
 
 void MainWindow::updateUIState() {
-    BankingSystem& bank = BankingSystem::getInstance();
-    bool loggedIn = bank.isLoggedIn();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
+    bool loggedIn = facade.isLoggedIn();
 
     loginWidget->setVisible(!loggedIn);
     headerWidget->setVisible(loggedIn);
     tabWidget->setVisible(loggedIn);
 
     if (loggedIn) {
-        string username = bank.getCurrentUser();
+        string username = facade.getCurrentUser();
         welcomeLabel->setText(QString("Welcome, %1!").arg(QString::fromStdString(username)));
     }
 }
 
 void MainWindow::refreshBalance() {
-    BankingSystem& bank = BankingSystem::getInstance();
-    double balance = bank.getBalance();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
+    double balance = facade.getBalance();
     balanceLabel->setText(QString("Balance: $%1").arg(balance, 0, 'f', 2));
 }
 
 void MainWindow::refreshTransactionHistory() {
-    BankingSystem& bank = BankingSystem::getInstance();
-    vector<Transaction> transactions = bank.getTransactionHistory();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
+    vector<BankingTradingFacade::SimpleTransaction> transactions = facade.getTransactionHistory();
 
     transactionDisplay->clear();
 
@@ -1065,26 +1058,26 @@ void MainWindow::refreshTransactionHistory() {
 
     for (const auto& trans : transactions) {
         history += QString("%1 | Day %2 | $%3 | %4\n")
-        .arg(QString::fromStdString(trans.getTypeString()), -15)
-            .arg(trans.getDay(), 3)
-            .arg(trans.getAmount(), 10, 'f', 2)
-            .arg(QString::fromStdString(trans.getDescription()));
+        .arg(QString::fromStdString(trans.type), -15)
+            .arg(trans.day, 3)
+            .arg(trans.amount, 10, 'f', 2)
+            .arg(QString::fromStdString(trans.description));
     }
 
     transactionDisplay->setPlainText(history);
 }
 
 void MainWindow::refreshMarketData() {
-    TradingBot& bot = TradingBot::getInstance();
-    vector<StockFields> stocks = bot.getAllStocks();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
+    vector<BankingTradingFacade::SimpleStockInfo> stocks = facade.getMarketData();
 
     stockMarketTable->setRowCount(stocks.size());
 
     int row = 0;
     for (const auto& stock : stocks) {
-        stockMarketTable->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(stock.ticker_symbol)));
+        stockMarketTable->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(stock.symbol)));
         stockMarketTable->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(stock.name)));
-        stockMarketTable->setItem(row, 2, new QTableWidgetItem(QString("$%1").arg(stock.cur, 0, 'f', 2)));
+        stockMarketTable->setItem(row, 2, new QTableWidgetItem(QString("$%1").arg(stock.currentPrice, 0, 'f', 2)));
 
 
 
@@ -1095,24 +1088,20 @@ void MainWindow::refreshMarketData() {
 }
 
 void MainWindow::refreshPortfolio() {
-    TradingBot& bot = TradingBot::getInstance();
-    vector<Portfolio> holdings = bot.getPortfolio();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
+    vector<BankingTradingFacade::SimplePortfolioItem> holdings = facade.getPortfolio();
 
     portfolioTable->setRowCount(holdings.size());
 
     int row = 0;
     for (const auto& h : holdings) {
-        double currentPrice = bot.getPrice(h.ticker_symbol);
-        double currentValue = h.getValue(currentPrice);
-        double profit = h.getProfits(currentPrice);
-
-        portfolioTable->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(h.ticker_symbol)));
+        portfolioTable->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(h.symbol)));
         portfolioTable->setItem(row, 1, new QTableWidgetItem(QString::number(h.shares)));
-        portfolioTable->setItem(row, 2, new QTableWidgetItem(QString("$%1").arg(h.averageCost, 0, 'f', 2)));
-        portfolioTable->setItem(row, 3, new QTableWidgetItem(QString("$%1").arg(currentValue, 0, 'f', 2)));
+        portfolioTable->setItem(row, 2, new QTableWidgetItem(QString("$%1").arg(h.averagePrice, 0, 'f', 2)));
+        portfolioTable->setItem(row, 3, new QTableWidgetItem(QString("$%1").arg(h.currentValue, 0, 'f', 2)));
 
-        QTableWidgetItem* profitItem = new QTableWidgetItem(QString("$%1").arg(profit, 0, 'f', 2));
-        profitItem->setForeground(profit >= 0 ? Qt::darkGreen : Qt::red);
+        QTableWidgetItem* profitItem = new QTableWidgetItem(QString("$%1").arg(h.profit, 0, 'f', 2));
+        profitItem->setForeground(h.profit >= 0 ? Qt::darkGreen : Qt::red);
         portfolioTable->setItem(row, 4, profitItem);
 
         row++;
@@ -1122,26 +1111,26 @@ void MainWindow::refreshPortfolio() {
 }
 
 void MainWindow::refreshTradingStats() {
-    TradingBot& bot = TradingBot::getInstance();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
+    BankingTradingFacade::PerformanceSummary performance = facade.getPerformance();
 
-    double profit = bot.getProfit();
-    int shares = bot.getTotalShares();
+    totalProfitLabel->setText(QString("$%1").arg(performance.totalProfit, 0, 'f', 2));
+    totalProfitLabel->setStyleSheet(performance.totalProfit >= 0 ? "font-weight: bold; color: green;" : "font-weight: bold; color: red;");
 
-    totalProfitLabel->setText(QString("$%1").arg(profit, 0, 'f', 2));
-    totalProfitLabel->setStyleSheet(profit >= 0 ? "font-weight: bold; color: green;" : "font-weight: bold; color: red;");
-
-    totalSharesLabel->setText(QString::number(shares));
+    totalSharesLabel->setText(QString::number(performance.totalShares));
     daysElapsedLabel->setText(QString::number(currentDay));
 
-    strategyLabel->setText(QString("Strategy: %1").arg(QString::fromStdString(bot.getName())));
+    strategyLabel->setText(QString("Strategy: %1").arg(QString::fromStdString(facade.getBotStatus())));
+    // Market condition accessed directly from TradingBot
+    TradingBot& bot = TradingBot::getInstance();
     marketConditionLabel->setText(QString("Market: %1").arg(QString::fromStdString(bot.getMarketCondition())));
 
     refreshTradeHistory();
 }
 
 void MainWindow::refreshTradeHistory() {
-    TradingBot& bot = TradingBot::getInstance();
-    vector<TradeRecords> trades = bot.getHistory();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
+    vector<BankingTradingFacade::SimpleTradeRecord> trades = facade.getTradeHistory();
 
     QString history;
     if (trades.empty()) {
@@ -1151,9 +1140,9 @@ void MainWindow::refreshTradeHistory() {
             history += QString("[Day %1] %2 %3 x%4 @ $%5 = $%6 (%7)\n")
             .arg(t.day)
                 .arg(QString::fromStdString(t.type))
-                .arg(QString::fromStdString(t.ticker_symbol))
+                .arg(QString::fromStdString(t.symbol))
                 .arg(t.shares)
-                .arg(t.cost, 0, 'f', 2)
+                .arg(t.price, 0, 'f', 2)
                 .arg(t.total, 0, 'f', 2)
                 .arg(QString::fromStdString(t.reason));
         }

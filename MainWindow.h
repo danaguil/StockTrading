@@ -17,8 +17,7 @@
 #include <QDoubleSpinBox>
 #include <QMessageBox>
 #include <QScrollArea>
-#include "BankingSystem.h"
-#include "TradingBot.h"
+#include "BankingTradingFacade.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
