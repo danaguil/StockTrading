@@ -1,6 +1,5 @@
 // MainWindow.cpp
 #include "MainWindow.h"
-#include "TradingBot.h"
 #include <QGridLayout>
 #include <QHeaderView>
 
@@ -874,7 +873,6 @@ void MainWindow::onViewScheduledDepositsClicked() {
 
 void MainWindow::onAdvanceDayClicked() {
     BankingTradingFacade& facade = BankingTradingFacade::getInstance();
-    TradingBot& bot = TradingBot::getInstance();
 
     currentDay++;
     currentDayLabel->setText(QString("Current Day: %1").arg(currentDay));
@@ -886,11 +884,8 @@ void MainWindow::onAdvanceDayClicked() {
                                  QString("Executed %1 scheduled deposit(s) on day %2!").arg(executed).arg(currentDay));
     }
 
-    // Advance market and run bot
-    bot.advanceDay();
-    if (bot.isRunning()) {
-        bot.executeTradingCycle();
-    }
+    // Advance market and run bot through facade
+    facade.advanceDay();
 
     // Update UI
     refreshBalance();
@@ -942,24 +937,17 @@ void MainWindow::onRefreshMarketClicked() {
 }
 
 void MainWindow::onEndSimulationClicked() {
-    TradingBot& bot = TradingBot::getInstance();
-    bot.stopBot();
+    BankingTradingFacade& facade = BankingTradingFacade::getInstance();
 
     // Try to end with profit
     int waitDays = 0;
     int maxWaitDays = 10;
 
-    while (!bot.tryEndWithProfit(maxWaitDays, waitDays)) {
-        waitDays++;
-        currentDay++;
-        bot.advanceDay();
-        bot.executeTradingCycle();
-    }
+    facade.tryEndWithProfit(maxWaitDays, waitDays, currentDay);
 
     currentDayLabel->setText(QString("Current Day: %1").arg(currentDay));
 
-    double profit = bot.getProfit();
-    int totalTrades = bot.getHistory().size();
+    BankingTradingFacade::PerformanceSummary perf = facade.getPerformance();
 
     QString resultMsg = QString(
                             "=== SIMULATION ENDED ===\n\n"
@@ -968,11 +956,11 @@ void MainWindow::onEndSimulationClicked() {
                             "Days Elapsed: %3\n"
                             "Extra Days Waited: %4\n\n"
                             "%5"
-                            ).arg(profit, 0, 'f', 2)
-                            .arg(totalTrades)
+                            ).arg(perf.totalProfit, 0, 'f', 2)
+                            .arg(perf.tradesExecuted)
                             .arg(currentDay)
                             .arg(waitDays)
-                            .arg(profit > 0 ? "SUCCESS: Ended with profit!" : "Note: Had to cut some losses.");
+                            .arg(perf.totalProfit > 0 ? "SUCCESS: Ended with profit!" : "Note: Had to cut some losses.");
 
     QMessageBox::information(this, "Simulation Results", resultMsg);
 
@@ -1121,9 +1109,8 @@ void MainWindow::refreshTradingStats() {
     daysElapsedLabel->setText(QString::number(currentDay));
 
     strategyLabel->setText(QString("Strategy: %1").arg(QString::fromStdString(facade.getBotStatus())));
-    // Market condition accessed directly from TradingBot
-    TradingBot& bot = TradingBot::getInstance();
-    marketConditionLabel->setText(QString("Market: %1").arg(QString::fromStdString(bot.getMarketCondition())));
+    // Get market condition from facade
+    marketConditionLabel->setText(QString("Market: %1").arg(QString::fromStdString(facade.getMarketCondition())));
 
     refreshTradeHistory();
 }
