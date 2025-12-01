@@ -16,6 +16,7 @@
 #include <QSpinBox>
 #include <QDoubleSpinBox>
 #include <QMessageBox>
+#include <QScrollArea>
 #include "BankingSystem.h"
 #include "TradingBot.h"
 
