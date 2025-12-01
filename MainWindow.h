@@ -36,7 +36,6 @@ private slots:
     void onDepositClicked();
     void onWithdrawClicked();
     void onViewTransactionsClicked();
-    void onRefreshBalanceClicked();
     void onScheduleDepositClicked();
     void onViewScheduledDepositsClicked();
     void onAdvanceDayClicked();
@@ -84,7 +83,6 @@ private:
     QLabel *welcomeLabel;
     QLabel *balanceLabel;
     QPushButton *logoutButton;
-    QPushButton *refreshBalanceButton;
     
     // Banking Page Components
     QWidget *bankingPage;
