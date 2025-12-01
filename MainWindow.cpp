@@ -289,8 +289,13 @@ void MainWindow::setupLoginPage() {
 }
 
 void MainWindow::setupBankingPage() {
-    bankingPage = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout(bankingPage);
+    // Create a scroll area for the banking page
+    QScrollArea *scrollArea = new QScrollArea();
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+    
+    QWidget *scrollWidget = new QWidget();
+    QVBoxLayout *layout = new QVBoxLayout(scrollWidget);
     layout->setSpacing(15);
     layout->setContentsMargins(15, 15, 15, 15);
 
@@ -456,11 +461,20 @@ void MainWindow::setupBankingPage() {
     layout->addWidget(scheduledBox);
     layout->addWidget(historyBox);
     layout->addStretch();
+    
+    // Set the scroll widget and create the banking page with scroll area
+    scrollArea->setWidget(scrollWidget);
+    bankingPage = scrollArea;
 }
 
 void MainWindow::setupTradingPage() {
-    tradingPage = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout(tradingPage);
+    // Create a scroll area for the trading page
+    QScrollArea *scrollArea = new QScrollArea();
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+    
+    QWidget *scrollWidget = new QWidget();
+    QVBoxLayout *layout = new QVBoxLayout(scrollWidget);
     layout->setSpacing(12);
     layout->setContentsMargins(12, 12, 12, 12);
 
@@ -710,6 +724,10 @@ void MainWindow::setupTradingPage() {
     layout->addWidget(portfolioBox);
     layout->addWidget(statsBox);
     layout->addWidget(tradeHistoryBox);
+    
+    // Set the scroll widget and create the trading page with scroll area
+    scrollArea->setWidget(scrollWidget);
+    tradingPage = scrollArea;
 }
 
 // ============================================================================
