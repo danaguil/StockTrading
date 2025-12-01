@@ -33,16 +33,12 @@ void MainWindow::setupUI() {
     balanceLabel = new QLabel("Balance: $0.00");
     balanceLabel->setStyleSheet("font-size: 14px; color: green;");
 
-    refreshBalanceButton = new QPushButton("Refresh Balance");
-    connect(refreshBalanceButton, &QPushButton::clicked, this, &MainWindow::onRefreshBalanceClicked);
-
     logoutButton = new QPushButton("Logout");
     connect(logoutButton, &QPushButton::clicked, this, &MainWindow::onLogoutClicked);
 
     headerLayout->addWidget(welcomeLabel);
     headerLayout->addWidget(balanceLabel);
     headerLayout->addStretch();
-    headerLayout->addWidget(refreshBalanceButton);
     headerLayout->addWidget(logoutButton);
 
     headerWidget->setVisible(false);
@@ -431,10 +427,6 @@ void MainWindow::onWithdrawClicked() {
 
 void MainWindow::onViewTransactionsClicked() {
     refreshTransactionHistory();
-}
-
-void MainWindow::onRefreshBalanceClicked() {
-    refreshBalance();
 }
 
 void MainWindow::onScheduleDepositClicked() {
