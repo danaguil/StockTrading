@@ -209,8 +209,10 @@ BankingTradingFacade::PerformanceSummary BankingTradingFacade::getPerformance() 
     std::vector<TradeRecords> trades = getTradingBot().getHistory();
     summary.tradesExecuted = trades.size();
     
+    // Get total profit (realized + unrealized) from TradingBot
+    summary.totalProfit = getTradingBot().getProfit();
+    
     // Calculate totals from portfolio
-    summary.totalProfit = 0.0;
     summary.totalShares = 0;
     summary.totalValue = 0.0;
     
@@ -219,7 +221,6 @@ BankingTradingFacade::PerformanceSummary BankingTradingFacade::getPerformance() 
         summary.totalShares += item.shares;
         double currentPrice = getTradingBot().getPrice(item.ticker_symbol);
         summary.totalValue += item.getValue(currentPrice);
-        summary.totalProfit += item.getProfits(currentPrice);
     }
     
     // Calculate success rate
@@ -266,6 +267,9 @@ std::vector<BankingTradingFacade::SimpleTradeRecord> BankingTradingFacade::getTr
 int BankingTradingFacade::advanceDay() {
     currentDay_++;
     
+    // Advance the trading bot's day
+    getTradingBot().advanceDay();
+    
     // Execute scheduled deposits
     executeScheduledDeposits(currentDay_);
     
@@ -297,4 +301,24 @@ void BankingTradingFacade::resetSimulation() {
     
     // Reset day
     currentDay_ = 1;
+}
+
+std::string BankingTradingFacade::getMarketCondition() {
+    return getTradingBot().getMarketCondition();
+}
+
+bool BankingTradingFacade::tryEndWithProfit(int maxWaitDays, int& currentWaitDay, int& currentDay) {
+    // Stop the bot first
+    stopBot();
+    
+    // Try to end with profit
+    while (!getTradingBot().tryEndWithProfit(maxWaitDays, currentWaitDay)) {
+        currentWaitDay++;
+        currentDay++;
+        currentDay_ = currentDay;
+        getTradingBot().advanceDay();
+        getTradingBot().executeTradingCycle();
+    }
+    
+    return true;
 }

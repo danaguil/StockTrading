@@ -117,6 +117,10 @@ public:
     int getCurrentDay() const;
     void resetSimulation();
     
+    // Market and simulation methods
+    std::string getMarketCondition();
+    bool tryEndWithProfit(int maxWaitDays, int& currentWaitDay, int& currentDay);
+    
 private:
     // Private constructor for Singleton
     BankingTradingFacade();
