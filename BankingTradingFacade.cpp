@@ -53,9 +53,8 @@ std::string BankingTradingFacade::getCurrentUser() const {
     return getBankingSystem().getCurrentUser();
 }
 
-// ============================================================================
-// BANKING OPERATIONS
-// ============================================================================
+// --- Banking Operations ---
+// Handle deposits, withdrawals, transactions, and scheduled deposits
 
 bool BankingTradingFacade::deposit(double amount, const std::string& description, int day) {
     return getBankingSystem().deposit(amount, description, day);
@@ -110,9 +109,8 @@ int BankingTradingFacade::executeScheduledDeposits(int currentDay) {
     return getBankingSystem().executeScheduledDeposits(currentDay);
 }
 
-// ============================================================================
-// TRADING OPERATIONS
-// ============================================================================
+// --- Trading Bot Operations ---
+// Start, stop, and monitor the automated trading bot
 
 bool BankingTradingFacade::startBot() {
     if (!isLoggedIn()) {
@@ -136,9 +134,8 @@ std::string BankingTradingFacade::getBotStatus() const {
     return isBotRunning() ? "ACTIVE" : "INACTIVE";
 }
 
-// ============================================================================
-// MARKET DATA
-// ============================================================================
+// --- Stock Market Data ---
+// Get current market prices and stock information
 
 std::vector<BankingTradingFacade::SimpleStockInfo> BankingTradingFacade::getMarketData() {
     std::vector<SimpleStockInfo> result;
@@ -170,13 +167,12 @@ std::vector<BankingTradingFacade::SimpleStockInfo> BankingTradingFacade::getMark
 }
 
 void BankingTradingFacade::refreshMarketData() {
-    // Market data is automatically updated by TradingBot
-    // This is a placeholder for future manual refresh functionality
+    // Market data updates automatically through TradingBot
+    // Could add manual refresh capability here later
 }
 
-// ============================================================================
-// PORTFOLIO
-// ============================================================================
+// --- Portfolio Management ---
+// Track owned stocks and their current values
 
 std::vector<BankingTradingFacade::SimplePortfolioItem> BankingTradingFacade::getPortfolio() {
     std::vector<SimplePortfolioItem> result;
@@ -201,9 +197,8 @@ std::vector<BankingTradingFacade::SimplePortfolioItem> BankingTradingFacade::get
     return result;
 }
 
-// ============================================================================
-// PERFORMANCE
-// ============================================================================
+// --- Performance Tracking ---
+// Calculate profit, success rate, and trading statistics
 
 BankingTradingFacade::PerformanceSummary BankingTradingFacade::getPerformance() {
     PerformanceSummary summary;
@@ -265,9 +260,8 @@ std::vector<BankingTradingFacade::SimpleTradeRecord> BankingTradingFacade::getTr
     return result;
 }
 
-// ============================================================================
-// DAY MANAGEMENT
-// ============================================================================
+// --- Day Management & Simulation Control ---
+// Advance time and reset the simulation
 
 int BankingTradingFacade::advanceDay() {
     currentDay_++;

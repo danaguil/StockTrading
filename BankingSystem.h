@@ -9,9 +9,9 @@
 #include <unordered_map>
 #include <ctime>
 
-// ============================================================================
-// TRANSACTION CLASS
-// ============================================================================
+// --- Transaction Class ---
+// Represents a single banking or trading transaction
+
 class Transaction {
 public:
     enum Type { DEPOSIT, WITHDRAWAL, STOCK_PURCHASE, STOCK_SALE, FEE };
@@ -47,9 +47,9 @@ private:
     std::string timestamp_;
 };
 
-// ============================================================================
-// SCHEDULED DEPOSIT CLASS
-// ============================================================================
+// --- Scheduled Deposit Class ---
+// Represents a future deposit scheduled for a specific day
+
 class ScheduledDeposit {
 public:
     ScheduledDeposit(int day, double amount, const std::string& description)
@@ -68,9 +68,9 @@ private:
     bool executed_;
 };
 
-// ============================================================================
-// USER ACCOUNT CLASS
-// ============================================================================
+// --- User Account Class ---
+// Stores individual user data, balance, and transaction history
+
 class UserAccount {
 public:
     UserAccount(const std::string& username, const std::string& password, 
@@ -139,9 +139,9 @@ private:
     std::vector<ScheduledDeposit> scheduledDeposits_;
 };
 
-// ============================================================================
-// BANKING SYSTEM - SINGLETON PATTERN
-// ============================================================================
+// --- Banking System (Singleton Pattern) ---
+// Central system managing all user accounts and banking operations
+
 class BankingSystem {
 public:
     // Singleton getInstance method
