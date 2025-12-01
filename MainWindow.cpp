@@ -14,10 +14,131 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::setupUI() {
+    // Apply professional stylesheet
+    setStyleSheet(
+        "QMainWindow {"
+        "   background-color: #2b2b2b;"
+        "}"
+        "QWidget {"
+        "   font-family: 'Segoe UI', Arial, sans-serif;"
+        "   font-size: 13px;"
+        "}"
+        "QPushButton {"
+        "   background-color: #0078d4;"
+        "   color: white;"
+        "   border: none;"
+        "   padding: 8px 16px;"
+        "   border-radius: 4px;"
+        "   font-weight: bold;"
+        "   min-width: 80px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #106ebe;"
+        "}"
+        "QPushButton:pressed {"
+        "   background-color: #005a9e;"
+        "}"
+        "QPushButton:disabled {"
+        "   background-color: #cccccc;"
+        "   color: #666666;"
+        "}"
+        "QLineEdit {"
+        "   padding: 6px;"
+        "   border: 2px solid #555555;"
+        "   border-radius: 4px;"
+        "   background-color: #3c3c3c;"
+        "   color: #ffffff;"
+        "}"
+        "QLineEdit:focus {"
+        "   border: 2px solid #0078d4;"
+        "}"
+        "QGroupBox {"
+        "   font-weight: bold;"
+        "   border: 2px solid #555555;"
+        "   border-radius: 6px;"
+        "   margin-top: 12px;"
+        "   padding-top: 16px;"
+        "   background-color: #353535;"
+        "   color: #ffffff;"
+        "}"
+        "QGroupBox::title {"
+        "   subcontrol-origin: margin;"
+        "   subcontrol-position: top left;"
+        "   padding: 4px 8px;"
+        "   color: #0078d4;"
+        "   font-size: 14px;"
+        "}"
+        "QTableWidget {"
+        "   border: 1px solid #555555;"
+        "   border-radius: 4px;"
+        "   background-color: #3c3c3c;"
+        "   gridline-color: #555555;"
+        "   selection-background-color: #0078d4;"
+        "   color: #ffffff;"
+        "}"
+        "QTableWidget::item {"
+        "   padding: 4px;"
+        "}"
+        "QHeaderView::section {"
+        "   background-color: #2b2b2b;"
+        "   padding: 6px;"
+        "   border: none;"
+        "   border-bottom: 2px solid #0078d4;"
+        "   font-weight: bold;"
+        "   color: #ffffff;"
+        "}"
+        "QTabWidget::pane {"
+        "   border: 2px solid #555555;"
+        "   border-radius: 4px;"
+        "   background-color: #353535;"
+        "   top: -1px;"
+        "}"
+        "QTabBar::tab {"
+        "   background-color: #2b2b2b;"
+        "   color: #cccccc;"
+        "   padding: 10px 20px;"
+        "   margin-right: 2px;"
+        "   border-top-left-radius: 4px;"
+        "   border-top-right-radius: 4px;"
+        "   font-weight: bold;"
+        "}"
+        "QTabBar::tab:selected {"
+        "   background-color: #353535;"
+        "   color: #0078d4;"
+        "   border-bottom: 3px solid #0078d4;"
+        "}"
+        "QTabBar::tab:hover:!selected {"
+        "   background-color: #404040;"
+        "}"
+        "QTextEdit {"
+        "   border: 1px solid #555555;"
+        "   border-radius: 4px;"
+        "   background-color: #3c3c3c;"
+        "   padding: 4px;"
+        "   color: #ffffff;"
+        "}"
+        "QLabel {"
+        "   color: #ffffff;"
+        "}"
+        "QDoubleSpinBox {"
+        "   padding: 6px;"
+        "   border: 2px solid #555555;"
+        "   border-radius: 4px;"
+        "   background-color: #3c3c3c;"
+        "   color: #ffffff;"
+        "}"
+        "QDoubleSpinBox:focus {"
+        "   border: 2px solid #0078d4;"
+        "}"
+    );
+
     centralWidget = new QWidget(this);
+    centralWidget->setStyleSheet("background-color: #2b2b2b;");
     setCentralWidget(centralWidget);
 
     mainLayout = new QVBoxLayout(centralWidget);
+    mainLayout->setSpacing(10);
+    mainLayout->setContentsMargins(10, 10, 10, 10);
 
     setupLoginPage();
     setupBankingPage();
@@ -25,15 +146,28 @@ void MainWindow::setupUI() {
 
     // Header (initially hidden)
     headerWidget = new QWidget();
+    headerWidget->setStyleSheet(
+        "background-color: #353535;"
+        "border-bottom: 2px solid #0078d4;"
+        "padding: 10px;"
+    );
     QHBoxLayout *headerLayout = new QHBoxLayout(headerWidget);
 
     welcomeLabel = new QLabel("Welcome!");
-    welcomeLabel->setStyleSheet("font-size: 16px; font-weight: bold;");
+    welcomeLabel->setStyleSheet("font-size: 18px; font-weight: bold; color: #0078d4;");
 
     balanceLabel = new QLabel("Balance: $0.00");
-    balanceLabel->setStyleSheet("font-size: 14px; color: green;");
+    balanceLabel->setStyleSheet("font-size: 16px; font-weight: bold; color: #107c10;");
 
     logoutButton = new QPushButton("Logout");
+    logoutButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #d13438;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #a52a2a;"
+        "}"
+    );
     connect(logoutButton, &QPushButton::clicked, this, &MainWindow::onLogoutClicked);
 
     headerLayout->addWidget(welcomeLabel);
@@ -52,50 +186,103 @@ void MainWindow::setupUI() {
     mainLayout->addWidget(loginWidget);
     mainLayout->addWidget(tabWidget);
 
-    setWindowTitle("Banking & Trading System");
+    setWindowTitle("StockTrading Application");
     resize(900, 700);
 }
 
 void MainWindow::setupLoginPage() {
     loginWidget = new QWidget();
+    loginWidget->setStyleSheet("background-color: #2b2b2b;");
     QVBoxLayout *layout = new QVBoxLayout(loginWidget);
+    layout->setSpacing(20);
+    layout->setContentsMargins(50, 50, 50, 50);
 
-    QLabel *titleLabel = new QLabel("Banking System");
-    titleLabel->setStyleSheet("font-size: 24px; font-weight: bold;");
+    QLabel *titleLabel = new QLabel("StockTrading Application");
+    titleLabel->setStyleSheet(
+        "font-size: 32px;"
+        "font-weight: bold;"
+        "color: #ffffff;"
+        "padding: 20px;"
+    );
     titleLabel->setAlignment(Qt::AlignCenter);
 
     QGroupBox *loginBox = new QGroupBox("Login / Register");
+    loginBox->setStyleSheet(
+        "QGroupBox {"
+        "   font-size: 16px;"
+        "   padding: 20px;"
+        "   margin-top: 20px;"
+        "}"
+        "QGroupBox::title {"
+        "   font-size: 18px;"
+        "   color: #ffffff;"
+        "}"
+    );
     QGridLayout *formLayout = new QGridLayout();
+    formLayout->setSpacing(15);
+    formLayout->setContentsMargins(20, 30, 20, 20);
 
-    formLayout->addWidget(new QLabel("Username:"), 0, 0);
+    QLabel *userLabel = new QLabel("Username:");
+    userLabel->setStyleSheet("font-weight: bold; font-size: 14px; color: #ffffff;");
+    formLayout->addWidget(userLabel, 0, 0);
     usernameInput = new QLineEdit();
+    usernameInput->setPlaceholderText("Enter your username");
+    usernameInput->setMinimumHeight(35);
     formLayout->addWidget(usernameInput, 0, 1);
 
-    formLayout->addWidget(new QLabel("Password:"), 1, 0);
+    QLabel *passLabel = new QLabel("Password:");
+    passLabel->setStyleSheet("font-weight: bold; font-size: 14px; color: #ffffff;");
+    formLayout->addWidget(passLabel, 1, 0);
     passwordInput = new QLineEdit();
+    passwordInput->setPlaceholderText("Enter your password");
     passwordInput->setEchoMode(QLineEdit::Password);
+    passwordInput->setMinimumHeight(35);
     formLayout->addWidget(passwordInput, 1, 1);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
+    buttonLayout->setSpacing(10);
     loginButton = new QPushButton("Login");
+    loginButton->setMinimumHeight(40);
+    loginButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #107c10;"
+        "   font-size: 14px;"
+        "   min-width: 120px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #0e6b0e;"
+        "}"
+    );
     registerButton = new QPushButton("Register");
+    registerButton->setMinimumHeight(40);
+    registerButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #107c10;"
+        "   font-size: 14px;"
+        "   min-width: 120px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #0e6b0e;"
+        "}"
+    );
 
     connect(loginButton, &QPushButton::clicked, this, &MainWindow::onLoginClicked);
     connect(registerButton, &QPushButton::clicked, this, &MainWindow::onRegisterClicked);
 
+    buttonLayout->addStretch();
     buttonLayout->addWidget(loginButton);
     buttonLayout->addWidget(registerButton);
+    buttonLayout->addStretch();
 
     formLayout->addLayout(buttonLayout, 2, 0, 1, 2);
     loginBox->setLayout(formLayout);
 
     statusLabel = new QLabel("");
     statusLabel->setAlignment(Qt::AlignCenter);
-    statusLabel->setStyleSheet("color: red;");
+    statusLabel->setStyleSheet("color: #d13438; font-size: 14px; font-weight: bold;");
 
     layout->addStretch();
     layout->addWidget(titleLabel);
-    layout->addSpacing(20);
     layout->addWidget(loginBox);
     layout->addWidget(statusLabel);
     layout->addStretch();
@@ -104,47 +291,80 @@ void MainWindow::setupLoginPage() {
 void MainWindow::setupBankingPage() {
     bankingPage = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout(bankingPage);
-
-
+    layout->setSpacing(15);
+    layout->setContentsMargins(15, 15, 15, 15);
 
     // Deposit
-    QGroupBox *depositBox = new QGroupBox("Deposit");
+    QGroupBox *depositBox = new QGroupBox("💰 Deposit");
     QGridLayout *depositLayout = new QGridLayout();
+    depositLayout->setSpacing(12);
 
-    depositLayout->addWidget(new QLabel("Amount:"), 0, 0);
+    QLabel *depAmtLabel = new QLabel("Amount:");
+    depAmtLabel->setStyleSheet("font-weight: bold; color: #ffffff;");
+    depositLayout->addWidget(depAmtLabel, 0, 0);
     depositAmount = new QDoubleSpinBox();
     depositAmount->setRange(0.01, 1000000.00);
     depositAmount->setDecimals(2);
     depositAmount->setValue(100.00);
     depositAmount->setPrefix("$");
+    depositAmount->setMinimumHeight(30);
     depositLayout->addWidget(depositAmount, 0, 1);
 
-    depositLayout->addWidget(new QLabel("Description:"), 1, 0);
+    QLabel *depDescLabel = new QLabel("Description:");
+    depDescLabel->setStyleSheet("font-weight: bold; color: #ffffff;");
+    depositLayout->addWidget(depDescLabel, 1, 0);
     depositDescription = new QLineEdit("Deposit");
+    depositDescription->setMinimumHeight(30);
     depositLayout->addWidget(depositDescription, 1, 1);
 
-    depositButton = new QPushButton("Deposit Now");
+    depositButton = new QPushButton("💵 Deposit Now");
+    depositButton->setMinimumHeight(35);
+    depositButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #107c10;"
+        "   font-size: 14px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #0e6b0e;"
+        "}"
+    );
     connect(depositButton, &QPushButton::clicked, this, &MainWindow::onDepositClicked);
     depositLayout->addWidget(depositButton, 2, 0, 1, 2);
     depositBox->setLayout(depositLayout);
 
     // Withdraw
-    QGroupBox *withdrawBox = new QGroupBox("Withdraw");
+    QGroupBox *withdrawBox = new QGroupBox("💸 Withdraw");
     QGridLayout *withdrawLayout = new QGridLayout();
+    withdrawLayout->setSpacing(12);
 
-    withdrawLayout->addWidget(new QLabel("Amount:"), 0, 0);
+    QLabel *withAmtLabel = new QLabel("Amount:");
+    withAmtLabel->setStyleSheet("font-weight: bold; color: #ffffff;");
+    withdrawLayout->addWidget(withAmtLabel, 0, 0);
     withdrawAmount = new QDoubleSpinBox();
     withdrawAmount->setRange(0.01, 1000000.00);
     withdrawAmount->setDecimals(2);
     withdrawAmount->setValue(50.00);
     withdrawAmount->setPrefix("$");
+    withdrawAmount->setMinimumHeight(30);
     withdrawLayout->addWidget(withdrawAmount, 0, 1);
 
-    withdrawLayout->addWidget(new QLabel("Description:"), 1, 0);
+    QLabel *withDescLabel = new QLabel("Description:");
+    withDescLabel->setStyleSheet("font-weight: bold; color: #ffffff;");
+    withdrawLayout->addWidget(withDescLabel, 1, 0);
     withdrawDescription = new QLineEdit("Withdrawal");
+    withdrawDescription->setMinimumHeight(30);
     withdrawLayout->addWidget(withdrawDescription, 1, 1);
 
-    withdrawButton = new QPushButton("Withdraw Now");
+    withdrawButton = new QPushButton("💳 Withdraw Now");
+    withdrawButton->setMinimumHeight(35);
+    withdrawButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #d13438;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #a52a2a;"
+        "}"
+    );
     connect(withdrawButton, &QPushButton::clicked, this, &MainWindow::onWithdrawClicked);
     withdrawLayout->addWidget(withdrawButton, 2, 0, 1, 2);
     withdrawBox->setLayout(withdrawLayout);
@@ -173,9 +393,29 @@ void MainWindow::setupBankingPage() {
 
     QHBoxLayout *scheduledButtonLayout = new QHBoxLayout();
     scheduleDepositButton = new QPushButton("Schedule Deposit");
+    scheduleDepositButton->setMinimumHeight(35);
+    scheduleDepositButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #8a8a8a;"
+        "   font-size: 13px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #6a6a6a;"
+        "}"
+    );
     connect(scheduleDepositButton, &QPushButton::clicked, this, &MainWindow::onScheduleDepositClicked);
 
     viewScheduledButton = new QPushButton("View Scheduled");
+    viewScheduledButton->setMinimumHeight(35);
+    viewScheduledButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #8a8a8a;"
+        "   font-size: 13px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #6a6a6a;"
+        "}"
+    );
     connect(viewScheduledButton, &QPushButton::clicked, this, &MainWindow::onViewScheduledDepositsClicked);
 
     scheduledButtonLayout->addWidget(scheduleDepositButton);
@@ -188,6 +428,16 @@ void MainWindow::setupBankingPage() {
     QVBoxLayout *historyLayout = new QVBoxLayout();
 
     viewTransactionsButton = new QPushButton("View Transactions");
+    viewTransactionsButton->setMinimumHeight(35);
+    viewTransactionsButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #8a8a8a;"
+        "   font-size: 13px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #6a6a6a;"
+        "}"
+    );
     connect(viewTransactionsButton, &QPushButton::clicked, this, &MainWindow::onViewTransactionsClicked);
 
     transactionDisplay = new QTextEdit();
@@ -211,15 +461,31 @@ void MainWindow::setupBankingPage() {
 void MainWindow::setupTradingPage() {
     tradingPage = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout(tradingPage);
+    layout->setSpacing(12);
+    layout->setContentsMargins(12, 12, 12, 12);
 
     // Keeps a count of the days elapsed in the sim
-    QGroupBox *dayBox = new QGroupBox("Simulation");
+    QGroupBox *dayBox = new QGroupBox("📅 Simulation Day");
     QHBoxLayout *dayLayout = new QHBoxLayout();
 
     currentDayLabel = new QLabel(QString("Current Day: %1").arg(currentDay));
-    currentDayLabel->setStyleSheet("font-size: 14px; font-weight: bold;");
+    currentDayLabel->setStyleSheet(
+        "font-size: 16px;"
+        "font-weight: bold;"
+        "color: #ffffff;"
+    );
 
-    advanceDayButton = new QPushButton("Advance Day");
+    advanceDayButton = new QPushButton("⏭️ Advance Day");
+    advanceDayButton->setMinimumHeight(35);
+    advanceDayButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #8a8a8a;"
+        "   font-size: 13px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #6a6a6a;"
+        "}"
+    );
 
     connect(advanceDayButton, &QPushButton::clicked, this, &MainWindow::onAdvanceDayClicked);
 
@@ -230,33 +496,52 @@ void MainWindow::setupTradingPage() {
     layout->addWidget(dayBox);
 
     // Displays the Stock Market stats
-    QGroupBox *marketBox = new QGroupBox("Stock Market");
+    QGroupBox *marketBox = new QGroupBox("📈 Stock Market");
     QVBoxLayout *marketLayout = new QVBoxLayout();
-
-    refreshMarketButton = new QPushButton("Refresh Market Data");
-    connect(refreshMarketButton, &QPushButton::clicked, this, &MainWindow::onRefreshMarketClicked);
-    marketLayout->addWidget(refreshMarketButton);
 
     stockMarketTable = new QTableWidget();
     stockMarketTable->setColumnCount(5);
     stockMarketTable->setHorizontalHeaderLabels({"Symbol", "Company", "Price", "Change %", "Trend"});
     stockMarketTable->horizontalHeader()->setStretchLastSection(true);
     stockMarketTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    stockMarketTable->setMinimumHeight(200);
     marketLayout->addWidget(stockMarketTable);
     marketBox->setLayout(marketLayout);
 
     // Control for the trading bot
-    QGroupBox *botBox = new QGroupBox("Trading Bot");
+    QGroupBox *botBox = new QGroupBox("🤖 Trading Bot");
     QVBoxLayout *botLayout = new QVBoxLayout();
 
     QHBoxLayout *botStatusLayout = new QHBoxLayout();
     botStatusLabel = new QLabel("Bot Status: INACTIVE");
-    botStatusLabel->setStyleSheet("font-weight: bold; color: red;");
+    botStatusLabel->setStyleSheet(
+        "font-weight: bold;"
+        "color: #d13438;"
+        "font-size: 14px;"
+        "padding: 6px 12px;"
+        "background-color: #fef0f0;"
+        "border-radius: 4px;"
+    );
 
     strategyLabel = new QLabel("Strategy: Conservative");
-    strategyLabel->setStyleSheet("font-weight: bold;");
+    strategyLabel->setStyleSheet(
+        "font-weight: bold;"
+        "color: #0078d4;"
+        "font-size: 14px;"
+        "padding: 6px 12px;"
+        "background-color: #e6f2ff;"
+        "border-radius: 4px;"
+    );
 
     marketConditionLabel = new QLabel("Market: UNKNOWN");
+    marketConditionLabel->setStyleSheet(
+        "font-weight: bold;"
+        "color: #8a8a8a;"
+        "font-size: 14px;"
+        "padding: 6px 12px;"
+        "background-color: #f0f0f0;"
+        "border-radius: 4px;"
+    );
 
     botStatusLayout->addWidget(botStatusLabel);
     botStatusLayout->addWidget(strategyLabel);
@@ -265,10 +550,57 @@ void MainWindow::setupTradingPage() {
     botLayout->addLayout(botStatusLayout);
 
     QHBoxLayout *botButtonLayout = new QHBoxLayout();
-    startBotButton = new QPushButton("Start the Bot!");
-    stopBotButton = new QPushButton("Stop the Bot!");
-    endSimulationButton = new QPushButton("End Simulation");
-    resetSimulationButton = new QPushButton("Reset Simulation");
+    botButtonLayout->setSpacing(8);
+    
+    startBotButton = new QPushButton("▶️ Start Bot");
+    startBotButton->setMinimumHeight(38);
+    startBotButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #107c10;"
+        "   font-size: 13px;"
+        "   font-weight: bold;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #0e6b0e;"
+        "}"
+    );
+    
+    stopBotButton = new QPushButton("⏸️ Stop Bot");
+    stopBotButton->setMinimumHeight(38);
+    stopBotButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #d13438;"
+        "   font-size: 13px;"
+        "   font-weight: bold;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #a52a2a;"
+        "}"
+    );
+    
+    endSimulationButton = new QPushButton("🏁 End Simulation");
+    endSimulationButton->setMinimumHeight(38);
+    endSimulationButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #8a8a8a;"
+        "   font-size: 13px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #6a6a6a;"
+        "}"
+    );
+    
+    resetSimulationButton = new QPushButton("🔄 Reset");
+    resetSimulationButton->setMinimumHeight(38);
+    resetSimulationButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: #ff8c00;"
+        "   font-size: 13px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: #e67e00;"
+        "}"
+    );
 
     connect(startBotButton, &QPushButton::clicked, this, &MainWindow::onStartBotClicked);
     connect(stopBotButton, &QPushButton::clicked, this, &MainWindow::onStopBotClicked);
@@ -283,7 +615,7 @@ void MainWindow::setupTradingPage() {
     botBox->setLayout(botLayout);
 
     // Portfolio of current shares held
-    QGroupBox *portfolioBox = new QGroupBox("Portfolio");
+    QGroupBox *portfolioBox = new QGroupBox("💼 Portfolio");
     QVBoxLayout *portfolioLayout = new QVBoxLayout();
 
     portfolioTable = new QTableWidget();
@@ -291,34 +623,85 @@ void MainWindow::setupTradingPage() {
     portfolioTable->setHorizontalHeaderLabels({"Symbol", "Shares", "Avg Price", "Current Value", "Profit"});
     portfolioTable->horizontalHeader()->setStretchLastSection(true);
     portfolioTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    portfolioTable->setMinimumHeight(150);
+    portfolioTable->setAlternatingRowColors(true);
+    portfolioTable->setStyleSheet(
+        "QTableWidget {"
+        "   alternate-background-color: #404040;"
+        "}"
+    );
     portfolioLayout->addWidget(portfolioTable);
     portfolioBox->setLayout(portfolioLayout);
 
     // Performance Stats after running the simulations
-    QGroupBox *statsBox = new QGroupBox("Performance");
+    QGroupBox *statsBox = new QGroupBox("📊 Performance Summary");
+    statsBox->setStyleSheet(
+        "QGroupBox {"
+        "   background-color: #353535;"
+        "   border: 2px solid #0078d4;"
+        "}"
+    );
     QGridLayout *statsLayout = new QGridLayout();
+    statsLayout->setSpacing(12);
 
-    statsLayout->addWidget(new QLabel("Total Profit:"), 0, 0);
+    QLabel *profitLabel = new QLabel("Total Profit:");
+    profitLabel->setStyleSheet("font-weight: bold; font-size: 14px; color: #ffffff;");
+    statsLayout->addWidget(profitLabel, 0, 0);
     totalProfitLabel = new QLabel("$0.00");
-    totalProfitLabel->setStyleSheet("font-weight: bold; color: green;");
+    totalProfitLabel->setStyleSheet(
+        "font-weight: bold;"
+        "color: #107c10;"
+        "font-size: 16px;"
+        "padding: 4px 8px;"
+        "background-color: #1a3a1a;"
+        "border-radius: 4px;"
+    );
     statsLayout->addWidget(totalProfitLabel, 0, 1);
 
-    statsLayout->addWidget(new QLabel("Total Shares Owned:"), 1, 0);
+    QLabel *sharesLabel = new QLabel("Total Shares Owned:");
+    sharesLabel->setStyleSheet("font-weight: bold; font-size: 14px; color: #ffffff;");
+    statsLayout->addWidget(sharesLabel, 1, 0);
     totalSharesLabel = new QLabel("0");
+    totalSharesLabel->setStyleSheet(
+        "font-weight: bold;"
+        "font-size: 16px;"
+        "color: #ffffff;"
+        "padding: 4px 8px;"
+        "background-color: #3a3a1a;"
+        "border-radius: 4px;"
+    );
     statsLayout->addWidget(totalSharesLabel, 1, 1);
 
-    statsLayout->addWidget(new QLabel("Days Elapsed:"), 2, 0);
+    QLabel *daysLabel = new QLabel("Days Elapsed:");
+    daysLabel->setStyleSheet("font-weight: bold; font-size: 14px; color: #ffffff;");
+    statsLayout->addWidget(daysLabel, 2, 0);
     daysElapsedLabel = new QLabel("0");
+    daysElapsedLabel->setStyleSheet(
+        "font-weight: bold;"
+        "font-size: 16px;"
+        "color: #ffffff;"
+        "padding: 4px 8px;"
+        "background-color: #1a2a3a;"
+        "border-radius: 4px;"
+    );
     statsLayout->addWidget(daysElapsedLabel, 2, 1);
     statsBox->setLayout(statsLayout);
 
     // Displays the Trading  History of the bots
-    QGroupBox *tradeHistoryBox = new QGroupBox("Trade History");
+    QGroupBox *tradeHistoryBox = new QGroupBox("📜 Trade History");
     QVBoxLayout *tradeHistoryLayout = new QVBoxLayout();
 
     tradeHistoryDisplay = new QTextEdit();
     tradeHistoryDisplay->setReadOnly(true);
     tradeHistoryDisplay->setMaximumHeight(150);
+    tradeHistoryDisplay->setStyleSheet(
+        "QTextEdit {"
+        "   font-family: 'Courier New', monospace;"
+        "   font-size: 12px;"
+        "   background-color: #3c3c3c;"
+        "   color: #ffffff;"
+        "}"
+    );
     tradeHistoryLayout->addWidget(tradeHistoryDisplay);
     tradeHistoryBox->setLayout(tradeHistoryLayout);
 
@@ -405,6 +788,7 @@ void MainWindow::onDepositClicked() {
         QMessageBox::information(this, "Success",
                                  QString("Deposited $%1 on day %2!").arg(amount, 0, 'f', 2).arg(currentDay));
         refreshBalance();
+        refreshTransactionHistory();  // Automatically refresh transaction display
     } else {
         QMessageBox::warning(this, "Error", "Deposit failed!");
     }
@@ -420,6 +804,7 @@ void MainWindow::onWithdrawClicked() {
         QMessageBox::information(this, "Success",
                                  QString("Withdrew $%1 on day %2!").arg(amount, 0, 'f', 2).arg(currentDay));
         refreshBalance();
+        refreshTransactionHistory();  // Automatically refresh transaction display
     } else {
         QMessageBox::warning(this, "Error", "Withdrawal failed! Insufficient balance.");
     }
@@ -509,7 +894,14 @@ void MainWindow::onStartBotClicked() {
     bot.startBot();
 
     botStatusLabel->setText("Bot Status: ACTIVE");
-    botStatusLabel->setStyleSheet("font-weight: bold; color: green;");
+    botStatusLabel->setStyleSheet(
+        "font-weight: bold;"
+        "color: #107c10;"
+        "font-size: 14px;"
+        "padding: 6px 12px;"
+        "background-color: #e6ffe6;"
+        "border-radius: 4px;"
+    );
 
     QMessageBox::information(this, "Trading Bot", "Trading bot started!");
 }
@@ -519,7 +911,14 @@ void MainWindow::onStopBotClicked() {
     bot.stopBot();
 
     botStatusLabel->setText("Bot Status: INACTIVE");
-    botStatusLabel->setStyleSheet("font-weight: bold; color: red;");
+    botStatusLabel->setStyleSheet(
+        "font-weight: bold;"
+        "color: #d13438;"
+        "font-size: 14px;"
+        "padding: 6px 12px;"
+        "background-color: #fef0f0;"
+        "border-radius: 4px;"
+    );
 
     QMessageBox::information(this, "Trading Bot", "Trading bot stopped.");
 }

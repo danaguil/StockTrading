@@ -57,8 +57,6 @@ cd StockTrading
 2. **Generate Makefile with qmake:**
 ```bash
 qmake BankingTradingSystem.pro
-# Or if qmake is not in PATH:
-/usr/local/opt/qt@6/bin/qmake BankingTradingSystem.pro
 ```
 
 3. **Build the application:**
