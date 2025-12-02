@@ -88,7 +88,6 @@ public:
     std::vector<SimplePortfolioItem> getPortfolio();
     
     // Performance summary
-    // ========================================================================
     
     struct PerformanceSummary {
         double totalProfit;
