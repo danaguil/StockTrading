@@ -154,9 +154,7 @@ public:
     BankingSystem(const BankingSystem&) = delete;
     BankingSystem& operator=(const BankingSystem&) = delete;
     
-    // ========================================================================
-    // USER MANAGEMENT
-    // ========================================================================
+    // User Management
     
     // Register a new user
     bool registerUser(const std::string& username, const std::string& password, 
@@ -211,9 +209,7 @@ public:
         return currentUser_;
     }
     
-    // ========================================================================
-    // BANKING OPERATIONS (for currently logged-in user)
-    // ========================================================================
+    // Banking Operations (for currently logged-in user)
     
     // Deposit money
     bool deposit(double amount, const std::string& description, int currentDay) {
