@@ -1,27 +1,9 @@
-# Banking System - Qt GUI
+# StockTrading Application using Qt GUI
 
-A Qt-based GUI application for a banking system with user authentication using the Singleton pattern.
+A Qt-based GUI application for a banking/trading system with user authentication using Facade, Singleton, Strategy, and Abstract Factory Design Batterns. This was coded with C++ and is our submission for our project for CS 542. 
 
-## Features
-
-### Banking System (Singleton Pattern)
-- User registration and login
-- Deposit and withdrawal operations
-- Transaction history tracking
-- Balance management
-- Thread-safe singleton implementation
-
-## Project Structure
-
-```
-GUI/
-├── BankingSystem.h       # Core banking logic (Singleton)
-├── MainWindow.h          # Main window header
-├── MainWindow.cpp        # Main window implementation
-├── main.cpp              # Application entry point
-├── BankingTradingSystem.pro  # Qt project file
-└── README.md             # This file
-```
+## Contributers
+Max, Jose, and Daniel. 
 
 ## Building the Project
 
